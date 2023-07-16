@@ -9,17 +9,17 @@ const getAllUser = ('/users', (req, res) => {
 
 
 const getUserById = ('/users/:userId', (req, res) => {
-  console.log('sdas');
+  console.log(typeof req.params.userId);
   User.findById(req.params.userId)
-    .orFail(() => new Error('Not found by id'))
+    .orFail(() => new Error('Not found user by id'))
     .then((user) => res.status(200).send(user))
 
     .catch((err) => {
-      if (err.message === 'Not found by id') {
-        res.status(404).send({ message: 'User not found with id' })
+      if (err.message === 'Not found user by id') {
+        return (res.status(404).send({ message: 'User not found with id' }))
 
       } else {
-        res.status(500).send({ message: 'Server error' })
+        return (res.status(400).send({ message: 'Data entered incorrectly' }))
       }
     })
 })
@@ -39,38 +39,44 @@ const createNewUser = ('/users', (req, res) => {
 
 
 const updateProfile = ('/users/me', (req, res) => {
-  if (!req.body.name) res.status(400).send({ message: 'incorrect data' })
-  typeof req.user._id
-  User.findByIdAndUpdate(req.user._id, { name: req.body.name })
+  if (req.body.name.length < 2 || req.body.name.length > 30) {
+    res.status(400).send({ message: 'incorrect data' })
+  }
+  else {
+    User.findByIdAndUpdate(req.user._id, { name: req.body.name }, { new: true })
 
-  .orFail(() => new Error('Not found by id'))
-    .then(user => res.status(200).send({ data: user }))
-    .catch((err) => {
+      .orFail(() => new Error('Not found by id'))
+      .then(user => res.status(200).send({ data: user }))
+      .catch((err) => {
 
-      if (err.message === 'Not found by id') {
-        res.status(404).send({ message: 'User not found with id' })
+        if (err.message === 'Not found by id') {
+          res.status(404).send({ message: 'User not found with id' })
 
-      } else {
-        res.status(500).send({ message: 'Server error' })
-      }
-    })
+        } else {
+          res.status(500).send({ message: 'Server error' })
+        }
+      })
+  }
 })
 
 
 const updateAvatar = ('/users/me/avatar', (req, res) => {
-  if (!req.body.avatar) res.status(400).send({ message: 'incorrect data' })
+  if (!req.body.avatar) {
+    res.status(400).send({ message: 'incorrect data' })
+  }
+  else {
+    User.findByIdAndUpdate(req.user._id, { avatar: req.body.avatar }, { new: true })
+      .orFail(() => new Error('Not found by id'))
+      .then(user => res.status(200).send({ data: user }))
+      .catch((err) => {
+        if (err.message === 'Not found by id') {
+          res.status(404).send({ message: 'User not found with id' })
 
-  User.findByIdAndUpdate(req.user._id, { avatar: req.body.avatar })
-    .orFail(() => new Error('Not found by id'))
-    .then(user => res.status(200).send({ data: user }))
-    .catch((err) => {
-      if (err.message === 'Not found by id') {
-        res.status(404).send({ message: 'User not found with id' })
-
-      } else {
-        res.status(500).send({ message: 'Server error' })
-      }
-    })
+        } else {
+          res.status(500).send({ message: 'Server error' })
+        }
+      })
+  }
 })
 
 module.exports = { getAllUser, getUserById, createNewUser, updateProfile, updateAvatar }
