@@ -9,11 +9,10 @@ const getAllUser = ('/users', (req, res) => {
 
 
 const getUserById = ('/users/:userId', (req, res) => {
-
+  console.log('sdas');
   User.findById(req.params.userId)
     .orFail(() => new Error('Not found by id'))
     .then((user) => res.status(200).send(user))
-
 
     .catch((err) => {
       if (err.message === 'Not found by id') {

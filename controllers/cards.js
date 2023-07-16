@@ -24,7 +24,7 @@ const createNewCard = ('/cards', (req, res) => {
 
 
 const deleteCardById = ('/cards/:cardId', (req, res) => {
-    if(req.params.cardId.length != 24){};
+    //if(req.params.cardId.length != 24){};
   Card.findByIdAndDelete(req.params.cardId)
     .orFail(() => new Error('Not found card by id'))
 
