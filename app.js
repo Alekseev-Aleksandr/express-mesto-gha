@@ -15,5 +15,5 @@ mongoose.connect('mongodb://localhost:27017/mestodb')
 
 app.use(express.json())
 app.use(router)
-
+app.use('*',(req, res)=>{res.status(404).send({message: "404 page not found"})})
 app.listen(3000, () => { console.log('listen 300 port'); })

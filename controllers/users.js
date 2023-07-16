@@ -39,11 +39,20 @@ const createNewUser = ('/users', (req, res) => {
 
 
 const updateProfile = ('/users/me', (req, res) => {
-  if (req.body.name.length < 2 || req.body.name.length > 30) {
+  if (req.body.name.length < 2 ||
+    req.body.name.length > 30 ||
+    req.body.about.length < 2 ||
+    req.body.about.length > 30) {
+
     res.status(400).send({ message: 'incorrect data' })
   }
   else {
-    User.findByIdAndUpdate(req.user._id, { name: req.body.name }, { new: true })
+    User.findByIdAndUpdate(req.user._id,
+      {
+        name: req.body.name,
+        about: req.body.about
+      },
+      { new: true })
 
       .orFail(() => new Error('Not found by id'))
       .then(user => res.status(200).send({ data: user }))
