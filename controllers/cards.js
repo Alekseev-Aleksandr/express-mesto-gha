@@ -24,14 +24,14 @@ const createNewCard = ('/cards', (req, res) => {
 
 
 const deleteCardById = ('/cards/:cardId', (req, res) => {
-
+    if(req.params.cardId.length != 24){};
   Card.findByIdAndDelete(req.params.cardId)
     .orFail(() => new Error('Not found card by id'))
 
     .then((card) => res.status(200).send(card))
     .catch((err) => {
       if (err.message === 'Not found card by id') {
-        res.status(404).send({ message: 'Card not found with id' })
+        res.status(400).send({ message: 'Card not found with id' })
 
       } else {
         res.status(500).send({ message: 'Server error' })
@@ -59,6 +59,7 @@ const addLikeCard = ('/cards/:cardId/likes', (req, res) => {
 
 
 const deleteLikeCard = ('/cards/:cardId/likes', (req, res) => {
+
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива

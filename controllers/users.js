@@ -10,9 +10,10 @@ const getAllUser = ('/users', (req, res) => {
 
 const getUserById = ('/users/:userId', (req, res) => {
 
-  User.findById(req.params.id)
+  User.findById(req.params.userId)
     .orFail(() => new Error('Not found by id'))
     .then((user) => res.status(200).send(user))
+
 
     .catch((err) => {
       if (err.message === 'Not found by id') {
@@ -40,11 +41,13 @@ const createNewUser = ('/users', (req, res) => {
 
 const updateProfile = ('/users/me', (req, res) => {
   if (!req.body.name) res.status(400).send({ message: 'incorrect data' })
-
+  typeof req.user._id
   User.findByIdAndUpdate(req.user._id, { name: req.body.name })
-    .orFail(() => new Error('Not found by id'))
+
+  .orFail(() => new Error('Not found by id'))
     .then(user => res.status(200).send({ data: user }))
     .catch((err) => {
+
       if (err.message === 'Not found by id') {
         res.status(404).send({ message: 'User not found with id' })
 
