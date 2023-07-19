@@ -12,7 +12,7 @@ const createNewCard = ('/cards', (req, res) => {
   })
     .then((user) => res.status(201).send(user))
     .catch((err) => {
-      if (err.message.includes('validation failed')) {
+      if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'incorrect data' });
       }
       res.status(500).send({ message: 'Server error' });
