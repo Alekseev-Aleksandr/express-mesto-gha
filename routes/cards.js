@@ -12,8 +12,8 @@ router.get('/cards', getAllCards);
 
 router.post('/cards', celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30).required,
-    link: Joi.string().min(2).max(30).required,
+    name: Joi.string().min(2).max(30).required(),
+    link: Joi.string().min(2).max(30).required(),
     owner: Joi.string().required,
     likes: Joi.string().required,
   })

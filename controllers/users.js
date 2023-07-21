@@ -34,7 +34,6 @@ const createNewUser = ((req, res, next) => {
           }
         })
     })
-  // .catch(next)
 });
 
 const updateProfile = ((req, res, next) => {
