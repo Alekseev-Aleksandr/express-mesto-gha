@@ -2,10 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs')
 const BadRequest = require('../errors/BadRequest')
 
-function validLink(avatar){
-  const reg = /https?:\/\/w+.+#?/;
-  return reg.test(avatar)
-}
+const reg = /https?:\/\/w+\.+#?/;
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -23,7 +20,6 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
-    validate: [validLink, 'Input link']
   },
   email: {
     type: String,
@@ -40,7 +36,7 @@ const userSchema = new mongoose.Schema({
 userSchema.statics.findUserByCredentials = function (email, password, next) {
 
   return this.findOne({ email })
-  .select('+password')
+    .select('+password')
     .then((user) => {
       console.log(user);
       if (!user) {

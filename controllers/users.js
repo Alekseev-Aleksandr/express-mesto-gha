@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/user');
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequest = require('../errors/BadRequest');
+let error;
 
 const getAllUser = ((req, res, next) => {
   User.find({})
@@ -27,7 +28,13 @@ const createNewUser = ((req, res, next) => {
     .then((hash) => {
       req.body.password = hash;
       User.create(req.body)
-        .then((user) => res.status(201).send(user))
+        .then((user) => {
+          // console.log('asd');
+          // error = user.avatar.validateSync()
+          // console.log(error);
+          // error.errors[avatar].message, 'User for Link invalid'
+          res.status(201).send(user)
+        })
         .catch((err) => {
           if (err.code === 11000) {
             res.status(409).send({ message: 'a user with email this already exists' })

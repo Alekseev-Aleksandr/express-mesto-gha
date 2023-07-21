@@ -9,6 +9,7 @@ const {
 
 } = require('../controllers/users');
 
+
 router.get('/users', getAllUser);
 
 router.get('/users/me', getMyInfo)
@@ -19,7 +20,7 @@ router.patch('/users/me',
   celebrate({
     body: Joi.object().keys({
       name: Joi.string().min(2).max(30),
-      about: Joi.string().min(2).max(30),
+      about: Joi.string().min(2).max(30)
     })
       .unknown(true)
   }),

@@ -3,6 +3,7 @@ const userRoutes = require('./users');
 const cardRoutes = require('./cards');
 const auth = require('../middlewares/auth');
 const { celebrate, Joi } = require('celebrate')
+const regExp = /https?:\/\/w+\.+#?/;
 
 const {
   createNewUser,
@@ -14,8 +15,8 @@ router.post('/signup',
     body: Joi.object().keys({
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
-      email: Joi.string().email({ minDomainSegments: 2 }).required(),
       password: Joi.string().min(8),
+      avatar: Joi.string().pattern(regExp)
     })
       .unknown(true)
   }),
