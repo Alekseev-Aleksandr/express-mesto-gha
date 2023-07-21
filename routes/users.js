@@ -18,7 +18,7 @@ router.get('/users/:userId',
   celebrate({
     headers: Joi.object().keys({
       userId: Joi.string().alphanum().length(24)
-    })
+    }).unknown(true)
   }),
   getUserById);
 

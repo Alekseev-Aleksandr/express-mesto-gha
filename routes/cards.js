@@ -18,7 +18,8 @@ router.post('/cards', celebrate({
     likes: Joi.string().required(),
   })
     .unknown(true)
-}), createNewCard);
+}),
+  createNewCard);
 
 router.delete('/cards/:cardId', deleteCardById);
 

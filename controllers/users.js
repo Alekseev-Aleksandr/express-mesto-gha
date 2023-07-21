@@ -22,7 +22,7 @@ const getUserById = ((req, res, next) => {
     //     throw new BadRequest('incorrect id')
     //   }
     // })
-    // .catch(next);
+     .catch(next);
 });
 
 const createNewUser = ((req, res, next) => {
