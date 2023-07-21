@@ -2,6 +2,8 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/user');
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequest = require('../errors/BadRequest');
+const validator = require('validator')
+
 let error;
 
 const getAllUser = ((req, res, next) => {
@@ -23,7 +25,7 @@ const getUserById = ((req, res, next) => {
 });
 
 const createNewUser = ((req, res, next) => {
-
+  if(!validator.isEmail(req.body.email)) throw new BadRequest("Invalid Email")
   User.createHashByPassword(req.body.password)
     .then((hash) => {
       req.body.password = hash;
@@ -33,7 +35,7 @@ const createNewUser = ((req, res, next) => {
           // error = user.avatar.validateSync()
           // console.log(error);
           // error.errors[avatar].message, 'User for Link invalid'
-          res.status(201).send(user)
+          res.status(201).send(user.name, user.about, user.avatar, user.email)
         })
         .catch((err) => {
           if (err.code === 11000) {
