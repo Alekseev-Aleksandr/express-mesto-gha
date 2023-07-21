@@ -12,7 +12,7 @@ const {
 router.post('/signup',
   celebrate({
     body: Joi.object().keys({
-      email: Joi.string().email({minDomainSegments: 2}).required,
+      email: Joi.string().email({minDomainSegments: 2}).required(),
       password: Joi.string().min(8),
     })
       .unknown(true)
@@ -22,7 +22,7 @@ router.post('/signup',
 router.post('/signin',
   celebrate({
     body: Joi.object().keys({
-      email: Joi.string().min(2).max(30).required,
+      email: Joi.string().min(2).max(30).required(),
       password: Joi.string().min(8),
     })
       .unknown(true)
