@@ -30,7 +30,7 @@ const deleteCardById = ('/cards/:cardId', (req, res, next) => {
     .then((card) => {
       if (card.owner.toString() === req.user._id) {
         Card.deleteOne(card)
-          .then((res).status(201).send({ message: "car was deleted" }))
+          .then((res).status(200).send({ message: "car was deleted" }))
       } else {
         throw new Forbidden('No rights to delete')
       }
