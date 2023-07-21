@@ -1,47 +1,43 @@
+const jwt = require('jsonwebtoken')
 const User = require('../models/user');
+const NotFoundError = require('../errors/NotFoundError');
+const BadRequest = require('../errors/BadRequest');
 
-const getAllUser = ('/users', (req, res) => {
+const getAllUser = ((req, res, next) => {
   User.find({})
     .then((users) => res.status(200).send(users))
     .catch(() => res.status(500).send({ message: 'Server error' }));
 });
 
-const getUserById = ('/users/:userId', (req, res) => {
+const getUserById = ((req, res, next) => {
   User.findById(req.params.userId)
-    .orFail(() => new Error('Not found user by id'))
+    .orFail(() => new NotFoundError('Not found user by id'))
     .then((user) => res.status(200).send(user))
     .catch((err) => {
-      if (err.message === 'Not found user by id') {
-        res.status(404).send({ message: 'Not found user by id' });
-      } else if (err.name === 'CastError') {
-        res.status(400).send({ message: 'incorrect id' });
-      } else res.status(500).send({ message: 'Server error' });
-    });
-});
-
-const createNewUser = ('/users', (req, res) => {
-  User.create(req.body)
-    .then((user) => res.status(201).send(user))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'incorrect data' });
+      if (err.name === 'CastError') {
+        throw new BadRequest('incorrect id')
       }
-      res.status(500).send({ message: 'Server error' });
-    });
+    })
+    .catch(next);
 });
 
-const updateProfile = ('/users/me', (req, res) => {
-  if (req.body.name) {
-    if (req.body.name.length < 2 || req.body.name.length > 30) {
-      res.status(400).send({ message: 'incorrect data' });
-    }
-  }
-  if (req.body.about) {
-    if (req.body.about.length < 2 || req.body.about.length > 30) {
-      return res.status(400).send({ message: 'incorrect data' });
-    }
-  }
+const createNewUser = ((req, res, next) => {
 
+  User.createHashByPassword(req.body.password)
+    .then((hash) => {
+      req.body.password = hash;
+      User.create(req.body)
+        .then((user) => res.status(201).send(user))
+        .catch((err) => {
+          if (err.code === 11000) {
+            res.status(409).send({ message: 'a user with email this already exists' })
+          }
+        })
+    })
+  // .catch(next)
+});
+
+const updateProfile = ((req, res, next) => {
   User.findByIdAndUpdate(req.user._id,
     {
       name: req.body.name,
@@ -60,22 +56,42 @@ const updateProfile = ('/users/me', (req, res) => {
     });
 });
 
-const updateAvatar = ('/users/me/avatar', (req, res) => {
+const updateAvatar = ((req, res, next) => {
   if (!req.body.avatar) {
-    res.status(400).send({ message: 'incorrect data' });
+    throw new BadRequest('Incorrect data')
   } else {
     User.findByIdAndUpdate(req.user._id, { avatar: req.body.avatar }, { new: true })
-      .orFail(() => new Error('Not found by id'))
+      .orFail(() => {
+        throw new NotFoundError('Not found user by id')
+      })
       .then((user) => res.status(200).send({ data: user }))
-      .catch((err) => {
-        if (err.message === 'Not found by id') {
-          res.status(404).send({ message: 'User not found with id' });
-        } else {
-          res.status(500).send({ message: 'Server error' });
-        }
-      });
+      .catch(next)
   }
 });
+
+const login = (req, res, next) => {
+  const { email, password } = req.body
+
+  User.findUserByCredentials(email, password, next)
+    .then((user => {
+      const token = jwt.sign({ _id: user.id }, 'unique-secret-key', { expiresIn: "7d" })
+      res.status(200).send(({ message: 'All right', token: token }))
+    }))
+    .catch(next)
+}
+
+const getMyInfo = (req, res, next) => {
+
+  User.findById(req.user._id)
+
+    .then((myInfo) => {
+      if (!myInfo) {
+        throw new NotFoundError('User with id not found')
+      }
+      res.status(200).send({ myInfo });
+    })
+    .catch(next)
+}
 
 module.exports = {
   getAllUser,
@@ -83,4 +99,6 @@ module.exports = {
   createNewUser,
   updateProfile,
   updateAvatar,
+  login,
+  getMyInfo,
 };
