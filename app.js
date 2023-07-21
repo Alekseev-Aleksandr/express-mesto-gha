@@ -14,8 +14,6 @@ app.use('*', (req, res) => { res.status(404).send({ message: '404 page not found
 app.use(errors())
 
 app.use((err, req, res, next) => {
-  console.log('ZASHLI V OSHIBKU');
-
   if (err.statusCode) {
     res.status(err.statusCode).send({ message: err.message })
   } else {

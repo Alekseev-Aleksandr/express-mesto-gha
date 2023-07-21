@@ -4,7 +4,7 @@ const cardRoutes = require('./cards');
 const auth = require('../middlewares/auth');
 const { celebrate, Joi } = require('celebrate')
 const regExp = /^(https?):\/\/[^ "]+$/;
-console.log(regExp.test("http://wya.ru"));
+
 const validator = require('validator')
 
 const {

@@ -16,12 +16,13 @@ const getUserById = ((req, res, next) => {
   User.findById(req.params.userId)
     .orFail(() => new NotFoundError('Not found user by id'))
     .then((user) => res.status(200).send(user))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        throw new BadRequest('incorrect id')
-      }
-    })
-    .catch(next);
+    // .catch((err) => {
+    //   console.log(req.pa);
+    //   if (err.name === 'CastError') {
+    //     throw new BadRequest('incorrect id')
+    //   }
+    // })
+    // .catch(next);
 });
 
 const createNewUser = ((req, res, next) => {
