@@ -33,15 +33,11 @@ router.patch('/users/me',
   }),
   updateProfile);
 
-// console.log(regExp.test("https://ya.ru/av2.bm"))
-
 router.patch('/users/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().pattern(regExp).required()
+  avatar: Joi.string().pattern(regExp).required()
   }).unknown(true)
 }),
   updateAvatar);
-
-//router.post('/users', createNewUser);
 
 module.exports = router;

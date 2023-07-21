@@ -30,7 +30,13 @@ router.delete('/cards/:cardId',
   }),
   deleteCardById);
 
-router.put('/cards/:cardId/likes', addLikeCard);
+router.put('/cards/:cardId/likes',
+  celebrate({
+    params: Joi.object().keys({
+      cardId: Joi.string().alphanum().length(24).required()
+    }).unknown(true)
+  }),
+  addLikeCard);
 
 router.delete('/cards/:cardId/likes',
   celebrate({

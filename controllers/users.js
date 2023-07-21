@@ -16,13 +16,7 @@ const getUserById = ((req, res, next) => {
   User.findById(req.params.userId)
     .orFail(() => new NotFoundError('Not found user by id'))
     .then((user) => res.status(200).send(user))
-    // .catch((err) => {
-    //   console.log(req.pa);
-    //   if (err.name === 'CastError') {
-    //     throw new BadRequest('incorrect id')
-    //   }
-    // })
-     .catch(next);
+    .catch(next);
 });
 
 const createNewUser = ((req, res, next) => {
@@ -32,10 +26,6 @@ const createNewUser = ((req, res, next) => {
       req.body.password = hash;
       User.create(req.body)
         .then((user) => {
-          // console.log('asd');
-          // error = user.avatar.validateSync()
-          // console.log(error);
-          // error.errors[avatar].message, 'User for Link invalid'
           res.status(201).send({
             "name": user.name,
             "about": user.about,
