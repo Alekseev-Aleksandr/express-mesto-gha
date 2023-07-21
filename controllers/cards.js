@@ -30,23 +30,20 @@ const deleteCardById = ('/cards/:cardId', (req, res, next) => {
     })
     .then((card) => {
       if (card.owner.toString() === req.user._id) {
-        console.log("DONE KARLEONE");
         Card.deleteOne(card)
           .then((res).status(201).send({ message: "car was deleted" }))
       } else {
-        console.log('fasf');
         throw new Forbidden('No rights to delete')
       }
     })
-     .catch((err) => {
-
-       if (err.name === 'CastError') {
-        console.log(err);
-       }})
-    //     throw new BadRequest('Incorect id')
+    //  .catch((err) => {
+    //    if (err.name === 'CastError') {
+    //     console.log(err);
+    //    }})
+    // //     throw new BadRequest('Incorect id')
     //   }
     // })
-    // .catch(next);
+    .catch(next);
 })
 // Card.findByIdAndDelete(req.params.cardId)
 
@@ -66,6 +63,10 @@ const deleteCardById = ('/cards/:cardId', (req, res, next) => {
 // });
 
 const addLikeCard = ('/cards/:cardId/likes', (req, res, next) => {
+  console.log("inner" + req.params.cardId);
+  if (!Card.findById(req.params.cardId)) {
+    throw new NotFoundError('Not found card by id')
+  }
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
@@ -75,11 +76,11 @@ const addLikeCard = ('/cards/:cardId/likes', (req, res, next) => {
       throw new NotFoundError('Not found card by id')
     })
     .then((card) => res.status(200).send(card))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        throw new BadRequest('incorrect id');
-      }
-    })
+    // .catch((err) => {
+    //   if (err.name === 'CastError') {
+    //     throw new BadRequest('incorrect id');
+    //   }
+    // })
     .catch(next)
 });
 
@@ -93,11 +94,11 @@ const deleteLikeCard = ('/cards/:cardId/likes', (req, res, next) => {
       throw new NotFoundError('Not found card by id');
     })
     .then((card) => res.status(200).send(card))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        throw new BadRequest('incorrect id');
-      }
-    })
+    // .catch((err) => {
+    //   if (err.name === 'CastError') {
+    //     throw new BadRequest('incorrect id');
+    //   }
+    // })
     .catch(next)
 });
 
