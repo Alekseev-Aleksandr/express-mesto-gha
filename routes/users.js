@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const regExp = /^(https?):\/\/[^ "]+$/;
 const { celebrate, Joi } = require('celebrate')
 const {
   getAllUser,
@@ -16,8 +17,8 @@ router.get('/users/me', getMyInfo)
 
 router.get('/users/:userId',
   celebrate({
-    headers: Joi.object().keys({
-      userId: Joi.string().alphanum().length(24)
+    params: Joi.object().keys({
+      userId: Joi.string().alphanum().length(24).required()
     }).unknown(true)
   }),
   getUserById);
@@ -32,10 +33,12 @@ router.patch('/users/me',
   }),
   updateProfile);
 
+// console.log(regExp.test("https://ya.ru/av2.bm"))
+
 router.patch('/users/me/avatar', celebrate({
   body: Joi.object().keys({
-    link: Joi.string()
-  })
+    avatar: Joi.string().pattern(regExp).required()
+  }).unknown(true)
 }),
   updateAvatar);
 
