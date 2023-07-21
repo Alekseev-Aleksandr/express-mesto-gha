@@ -28,8 +28,8 @@ router.post('/signup',
 router.post('/signin',
   celebrate({
     body: Joi.object().keys({
-      email: Joi.string().min(2).max(30).required(),
-      password: Joi.string().min(8),
+      email: Joi.string().email({minDomainSegments: 2}).required(),
+      password: Joi.string().min(8).required(),
     })
       .unknown(true)
   }),

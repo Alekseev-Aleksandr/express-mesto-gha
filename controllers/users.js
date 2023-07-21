@@ -25,7 +25,7 @@ const getUserById = ((req, res, next) => {
 });
 
 const createNewUser = ((req, res, next) => {
-  if(!validator.isEmail(req.body.email)) throw new BadRequest("Invalid Email")
+  if (!validator.isEmail(req.body.email)) throw new BadRequest("Invalid Email")
   User.createHashByPassword(req.body.password)
     .then((hash) => {
       req.body.password = hash;
@@ -35,7 +35,12 @@ const createNewUser = ((req, res, next) => {
           // error = user.avatar.validateSync()
           // console.log(error);
           // error.errors[avatar].message, 'User for Link invalid'
-          res.status(201).send(user.name, user.about, user.avatar, user.email)
+          res.status(201).send({
+            "name": user.name,
+            "about": user.about,
+            "avatar": user.avatar,
+            "email": user.email
+          })
         })
         .catch((err) => {
           if (err.code === 11000) {
