@@ -34,9 +34,9 @@ const createNewUser = ((req, res, next) => {
         })
         .catch((err) => {
           if (err.code === 11000) {
-            throw (new Conflict('a user with email this already exists'));
+            return next(new Conflict('a user with email this already exists'));
           }
-          next();
+          return next();
         });
     }).catch(next);
 });
@@ -69,11 +69,9 @@ const updateAvatar = ((req, res, next) => {
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
-  console.log('Inter 1 = ', email, password);
 
   User.findUserByCredentials(email, password, next)
     .then((user) => {
-      console.log(user);
       const token = jwt.sign({ _id: user.id }, 'unique-secret-key', { expiresIn: '7d' });
       res.status(200).send(({ message: 'All right', tok: token }));
     })

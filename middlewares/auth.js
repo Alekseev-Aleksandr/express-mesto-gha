@@ -4,7 +4,6 @@ const BadRequest = require('../errors/BadRequest');
 
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
-  console.log('AUTH');
   let payload;
   if (!authorization) {
     throw new Unauthorized('Please log in');
