@@ -36,7 +36,7 @@ const createNewUser = ((req, res, next) => {
           if (err.code === 11000) {
             return next(new Conflict('a user with email this already exists'));
           }
-          return next();
+          return next(err);
         });
     }).catch(next);
 });

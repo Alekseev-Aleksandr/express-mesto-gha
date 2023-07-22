@@ -18,7 +18,7 @@ const createNewCard = ('/cards', (req, res, next) => {
       if (err.name === 'ValidationError') {
         next(new BadRequest('Incorect data'));
       }
-      next();
+      next(err);
     });
 });
 
