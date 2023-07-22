@@ -39,8 +39,7 @@ const createNewUser = ((req, res, next) => {
           return next();
         });
     }).catch(next);
-}
-);
+});
 
 const updateProfile = ((req, res, next) => {
   User.findByIdAndUpdate(
