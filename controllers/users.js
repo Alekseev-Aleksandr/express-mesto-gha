@@ -69,18 +69,16 @@ const updateAvatar = ((req, res, next) => {
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
-
   User.findUserByCredentials(email, password, next)
     .then((user) => {
-      const token = jwt.sign({ _id: user.id }, 'unique-secret-key', { expiresIn: '7d' });
-      res.status(200).send(({ message: 'All right', tok: token }));
+      const newToken = jwt.sign({ _id: user.id }, 'unique-secret-key', { expiresIn: '7d' });
+      res.status(200).send(({ message: 'All right', token: newToken }));
     })
     .catch(next);
 };
 
 const getMyInfo = (req, res, next) => {
   User.findById(req.user._id)
-
     .then((myInfo) => {
       if (!myInfo) {
         throw new NotFoundError('User with id not found');
