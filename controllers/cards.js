@@ -11,47 +11,43 @@ const getAllCards = ('/cards', (req, res, next) => {
 
 const createNewCard = ('/cards', (req, res, next) => {
   Card.create({
-    ...req.body, owner: req.user._id
+    ...req.body, owner: req.user._id,
   })
     .then((user) => res.status(201).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequest('Incorect id')
+        next(new BadRequest('Incorect data'));
       }
-    })
-    .catch(next);
+      next();
+    });
 });
 
 const deleteCardById = ('/cards/:cardId', (req, res, next) => {
   Card.findById(req.params.cardId)
     .orFail(() => {
-      throw new NotFoundError('Not found card by id')
+      throw new NotFoundError('Not found card by id');
     })
     .then((card) => {
       if (card.owner.toString() === req.user._id) {
-        Card.deleteOne(card)
-          .then((res).status(200).send({ message: "car was deleted" }))
-      } else {
-        throw new Forbidden('No rights to delete')
+        return Card.deleteOne(card)
+          .then((res).status(200).send({ message: 'card was deleted' }));
       }
+      throw new Forbidden('No rights to delete');
     })
     .catch(next);
-})
+});
 
 const addLikeCard = ('/cards/:cardId/likes', (req, res, next) => {
-  if (!Card.findById(req.params.cardId)) {
-    throw new NotFoundError('Not found card by id')
-  }
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   )
     .orFail(() => {
-      throw new NotFoundError('Not found card by id')
+      throw new NotFoundError('Not found card by id');
     })
     .then((card) => res.status(200).send(card))
-    .catch(next)
+    .catch(next);
 });
 
 const deleteLikeCard = ('/cards/:cardId/likes', (req, res, next) => {
@@ -64,7 +60,7 @@ const deleteLikeCard = ('/cards/:cardId/likes', (req, res, next) => {
       throw new NotFoundError('Not found card by id');
     })
     .then((card) => res.status(200).send(card))
-    .catch(next)
+    .catch(next);
 });
 
 module.exports = {
